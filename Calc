@@ -1,0 +1,158 @@
+// 一个简单的Java类，用于表示函数和求导
+public class Calculus {
+
+    // 一个抽象类，表示任意函数
+    public static abstract class Function {
+        // 一个抽象方法，表示函数值
+        public abstract double value(double x);
+        // 一个抽象方法，表示函数导数
+        public abstract Function derivative();
+    }
+
+    // 一个具体类，表示常数函数
+    public static class Constant extends Function {
+        private double c; // 常数值
+
+        public Constant(double c) {
+            this.c = c;
+        }
+
+        @Override
+        public double value(double x) {
+            return c;
+        }
+
+        @Override
+        public Function derivative() {
+            return new Constant(0); // 常数函数的导数为零
+        }
+    }
+
+    // 一个具体类，表示幂函数
+    public static class Power extends Function {
+        private double a; // 系数
+        private double n; // 指数
+
+        public Power(double a, double n) {
+            this.a = a;
+            this.n = n;
+        }
+
+        @Override
+        public double value(double x) {
+            return a * Math.pow(x, n);
+        }
+
+        @Override
+        public Function derivative() {
+            return new Power(a * n, n - 1); // 幂函数的导数为a*n*x^(n-1)
+        }
+    }
+
+    // 一个具体类，表示指数函数
+    public static class Exponential extends Function {
+    private double a; // 底数
+        private double b; // 系数
+
+        public Exponential(double a, double b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        @Override
+        public double value(double x) {
+            return b * Math.pow(a, x);
+        }
+
+        @Override
+        public Function derivative() {
+            return new Exponential(a, b * Math.log(a)); // 指数函数的导数为b*a^x*ln(a)
+        }
+    }
+
+    // 一个具体类，表示对数函数
+    public static class Logarithm extends Function {
+        private double a; // 底数
+        private double b; // 系数
+
+        public Logarithm(double a, double b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        @Override
+        public double value(double x) {
+            return b * Math.log(x) / Math.log(a);
+        }
+
+        @Override
+        public Function derivative() {
+            return new Constant(b / (Math.log(a) * x)); // 对数函数的导数为b/(ln(a)*x)
+             }
+    }
+
+    // 一个具体类，表示三角函数
+    public static class Trigonometric extends Function {
+        private String type; // 类型，可以是sin, cos, tan等
+        private double a; // 系数
+        private double b; // 频率
+        private double c; // 相位
+
+        public Trigonometric(String type, double a, double b, double c) {
+            this.type = type;
+            this.a = a;
+            this.b = b;
+            this.c = c;
+        }
+
+        @Override
+        public double value(double x) {
+            switch (type) {
+                case "sin":
+                    return a * Math.sin(b * x + c);
+                case "cos":
+                    return a * Math.cos(b * x + c);
+                case "tan":
+                    return a * Math.tan(b * x + c);
+                default:
+                    return 0; // 其他类型暂不支持
+            }
+        }
+
+        @Override
+        public Function derivative() {
+            switch (type) {
+                case "sin":
+                    return new Trigonometric("cos", a * b, b, c); // sin函数的导数为a*b*cos(b*x+c)
+                case "cos":
+                    return new Trigonometric("sin", -a * b, b, c); // cos函数的导数为-a*b*sin(b*x+c)
+                case "tan":
+                    return new Power(a * b / Math.cos(c), 2); // tan函数的导数为a*b/cos^2(c)
+ default:
+                    return new Constant(0); // 其他类型暂不支持
+            }
+        }
+    }
+
+    // 一个测试方法，用于输出函数和导数的值
+    public static void test(Function f, double x) {
+        System.out.println("f(x) = " + f.value(x));
+        System.out.println("f'(x) = " + f.derivative().value(x));
+    }
+
+    // 一个主方法，用于创建一些函数对象并测试它们
+    public static void main(String[] args) {
+        Function f1 = new Constant(5); // 常数函数f1(x) = 5
+        Function f2 = new Power(2, 3); // 幂函数f2(x) = 2x^3
+        Function f3 = new Exponential(Math.E, 1); // 指数函数f3(x) = e^x
+        Function f4 = new Logarithm(Math.E, 1); // 对数函数f4(x) = ln(x)
+        Function f5 = new Trigonometric("sin", 1, Math.PI / 2, 0); // 三角函数f5(x) = sin(pi/2*x)
+
+        test(f1, 0); // 测试f1在x=0处的值和导数
+        test(f2, 1); // 测试f2在x=1处的值和导数
+        test(f3, Math.log(2)); // 测试f3在x=ln(2)处的值和导数
+        test(f4, Math.E); // 测试f4在x=e处的值和导数
+        test(f5, Math.PI / 6); // 测试f5在x=pi/6处的值和导数
+
+    }
+}
