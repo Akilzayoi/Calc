@@ -1,4 +1,4 @@
-// 一个简单的Java类，用于表示函数和求导
+// Java语言用于表示函数和求导
 public class Calculus {
 
     // 一个抽象类，表示任意函数
